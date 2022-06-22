@@ -1,23 +1,27 @@
-# This is the Server side of our app about ALL
-
-# Essentials
-library(shiny)
-library(dplyr)
+library(tidyverse)
 library(ggplot2)
 
-function(input, output){
+# Define server logic required to draw a plot in shiny ALL App
+server <- function(input, output) {
   
-  df <- read.csv("cancer_data.csv", header=TRUE)
   
-  # generate the table output
-  output$table <- renderTable(head(df))
+    # initialize given cancer data via cancer_data.csv
+    df <- read.csv("cancer_data.csv", header =TRUE)
+    
+    # giva an output of the dataframe
+    output$tableCancer <- renderTable(head(df))
+    
+    
+    # generate input smoking based on input$smoking from ui.R
+    output$smokersPlot <- renderPlot({
+      
+      df %>% 
+        ggplot(aes( x=age, y=smoking)) +
+        geom_col() +
+        theme_bw() +
+        labs( x = "Patient Age in Years",
+              y = "Patient habit of Smoking")
+       })
   
-  # generate the plot output
-  output$plot_agesmo <- renderPlot({
-    df %>%
-      ggplot(aes(x = age, y = smoking))+
-      geom_col() + 
-      theme_bw() +
-      labs(x = "Patients Age in Years",
-           y = "Patients habit of Smoking") }) 
+  
 }
