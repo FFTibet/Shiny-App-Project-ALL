@@ -1,12 +1,20 @@
 library(shiny)
-
+library(shinythemes)
 
 # Define UI for Aplication that shows ALL
 ui <- fluidPage(
   
+  
+  
   # Application title
   titlePanel("ALL-Dashboard"),
   
+  # Set tabset Panels
+  tabsetPanel(
+    
+    # set tab Panel 1
+    tabPanel("Tab 1",
+
   # sidebar Panel
   sidebarLayout(
     sidebarPanel(h4("This is our SidebarPanel:"),
@@ -33,9 +41,27 @@ ui <- fluidPage(
                   plotOutput("smokersPlot"),br(),
               h5(strong("This example show the Head of our Database of Cancer Data:")),br(),
                   tableOutput("tableCancer")
-    )
+              
+              ) # main panel closing bracket
     
-    ))
+      ) # side bar layout closing bracket
+    
+    ), # tab Panel 1 closing bracket  
+  
+    # set tab panel 2
+    tabPanel("Tab 2",
+             p("This section has no content yet")
+      
+    ), # tab Panel 2 closing bracket
+  
+    # set tab panel 3
+    tabPanel("Tab 3",
+            p("This section has no content yet")
+           
+    ) # tab Panel 3 closing bracket
+    
+  ) # tab set Panel closing bracket
+) # fluid Page closing bracket
   
     
   
