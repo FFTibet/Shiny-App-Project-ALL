@@ -79,26 +79,35 @@ Häufige Therapiearten sind die systemische Chemptherapie, Tyrosinkinase-Inhibit
                
                navlistPanel(
                  
-                 
+                 # add to every graphic a description and comparison to mean values of healthy humans 
                  tabPanel("Plot 1",
+                          
+                          # gbt to alcohol (and bmi)
+                          plotOutput("boxplot_gbt_alc")
                    
                  ),
                  
                  
                  tabPanel("Plot 2",
                    
+                          # age to white blood cells (and gender, smoker)
+                          plotOutput("ggplot_age_wbc")
                  ),
                  
                  
                  
                  tabPanel("Plot 3",
                    
+                          # age to hemoglobin (and gender)
+                          plotOutput("ggplot_age_hemoglobine")
                  ),
                  
                  
                  
                  tabPanel("Plot 4",
                    
+                          # age to rbc (and gender, smoker)
+                          plotOutput("ggplot_age_rbc")
                  ),
                  
                  
