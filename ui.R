@@ -1,136 +1,296 @@
 library(shiny)
 library(shinythemes)
+library(datasets)
+
+# set global variabels for choices
+check_choices <- c("ID","age","chol","diet","gender","height","smoking","weight","previousdiseasinfam","surroundings","diagnose",
+                   "alcohol","bmi","eosinphils","monocytes","lymphocytes","neutrophiles","gbt","wbc","rbc","hemoglobine","creatinine")
+
+# set global variables for Table summary
+sel_input_table <- c("age", "chol", "height", "weight", "bmi","eosinphils", "monocytes","lymphocytes","neutrophiles",
+                     "gbt","wbc","rbc","hemoglobine","creatinine")
+
 
 # Define UI for Application that shows ALL
-ui <- fluidPage(
-  
-  theme = shinytheme("slate"),
-  
-  navbarPage(
-    
-    p(strong("ALL - Dashboard")),
-    tabPanel( icon = icon("fad fa-home"),
-              
-              br(),
-              img(src = 'header_krebszelle.png', align = "center", height = "280 px"),
-              
-              h1(em("Welcome to our Leukemia Dashboard !"), Style = "color: grey; font-size:40px"),
-      
-    ),
-    
-    
-    tabPanel("Informations about Leukemia",
-             
-             mainPanel(
-               "Die akute lymphatische Leukämie (ALL) ist eine Art des Blutkrebs, welche aufgrund einer Reihe von erworbenen genetischen Aberrationen entsteht. Die ALL entsteht im Knochenmark und hängt mit einer Überproduktion unreifer weißer Blutzellen zusammen. Der Reifungsprozess, bei dem sich alle Blutzellen in einem harmonischen Gleichgewicht vermehren und erneuern, gerät hier außer Kontrolle. Dadurch wird die normale Blutbildung verdrängt, wodurch nicht mehr genug gesunde weiße Blutzellen, wie auch Erythrozyten (rote Blutzellen) und Thrombozyten (Blutplättchen) gebildet werden können."
-             ),
-             br(), br(),
-             
-             mainPanel(
-               tabsetPanel(
-                 tabPanel("Pathophysiologie",
+ui <- fluidPage(theme = shinytheme("sandstone"),
+                
+                navbarPage(
+                  p(strong("ALL - Dashboard")),
+                  tabPanel(
+                    icon = icon("home"),
+                    
+                    br(),
+                    img(
+                      src = 'leukemiabild.png',
+                      align = "center",
+                      height = "230 px"
+                    ),
+                    
+                    br(),
+                    br(),
+                    h1(em("Willkommen zu unserem Leukaemie Dashboard !"), Style = "color: grey; font-size:40px"),
+                    
+                    withMathJax(includeMarkdown("aboutapp.md"))
+                    
+                  ),
+                  
+                  
+                  tabPanel( icon = icon("info"),
+                    "Ueber Leukaemie",
+                    
+                    mainPanel(
+                      withMathJax(includeMarkdown("general.md"))
+                    ),
+                    br(),
+                    br(),
+                    
+                    mainPanel(
+                      tabsetPanel(
+                        tabPanel(
+                          "Pathophysiologie",
                           
-                          p("Die akute lymphatische Leukämie (ALL) ist eine Art des Blutkrebs, welche aufgrund einer Reihe von erworbenen genetischen Aberrationen entsteht. Die ALL entsteht im Knochenmark und hängt mit einer Überproduktion unreifer weißer Blutzellen zusammen. Der Reifungsprozess, bei dem sich alle Blutzellen in einem harmonischen Gleichgewicht vermehren und erneuern, gerät hier außer Kontrolle. Dadurch wird die normale Blutbildung verdrängt, wodurch nicht mehr genug gesunde weiße Blutzellen, wie auch Erythrozyten (rote Blutzellen) und Thrombozyten (Blutplättchen) gebildet werden können.
-Da die ALL vom Knochenmark aus das gesamte Orgransystem befallen kann, wird sie als bösartige Systemerkrankung bezeichnet. Unbehandelt kann die ALL aufgrund des schnellen Verlaufes innerhalb weniger Monate zum Tod führen.
-"), br(),
+                          p(
+                            withMathJax(includeMarkdown("patho.md"))
+                          ),
+                          br(),
+                        ),
+                        
+                        tabPanel(
+                          "Ursachen",
                           
-                   
-                 ),
-                 
-                 
-                 tabPanel("Ursachen",
+                          p(
+                            withMathJax(includeMarkdown("causes.md"))
+                          ),
+                          br()
+                        ),
+                        
+                        
+                        tabPanel(
+                          "Symptome",
+                          p(
+                            withMathJax(includeMarkdown("symptoms.md"))
+                          ),
+                          br(),
                           
-                          p("Bisher sind die Ursachen für die Erkrankung an ALL weitgehend unbekannt. Jedoch kann es vor allem durch Mutationen (genetische Veränderungen) in einer lymphatischen Zelle zu einer bösartigen Veränderung dieser Zelle kommen. Die Vermehrung dieser Zelle und der Nachkommen geschieht dann unkontrolliert.
-Zudem gibt es Risikofaktoren, welche diskutiert werden. Darunter zählen die radioaktive Strahlung, bestimmte chemische Substanzen, Virusinfektionen oder Schwächungen des Immunsystems. 
-"), br(),
-                          img(src = 'leukemia-symptoms.png', align = "center", height = "280 px"),
-                 ),
-                 
-                 
-                 tabPanel("Symptome", 
-                          p("Übliche Symptome, welche bei einer ALL auftreten, sind allgemeine Schwäche und Anämie (Blutarmut), welche sich durch Schwäche, blätte, Müdigkeit, Unwohlsein und belastungsabhängige Brustschmerzen manifestieren. Zudem können Patienten unter Blutgerinnungsstörungen und Blutneigung durch wenige Blutplättchen leiden. Diese können leichte Blutergüsse, Schleimhautblutungen, Nasenbluten und Zahnfleischbluten verursachen. Weitere Symptome können Infekte mit Lymphknotenschwellungen, Fieber und Knochenschmerzen sein, wie eine Immunschwäche, welche aus dem Mangel an funktionsfähigen weißen Blutkörperchen resultieren."), br(),
-                   
-                 ),
-                 
-                 
-                 tabPanel("Diagnostik",
-                          p("Für die Erstellung einer Diagnose ist eine Untersuchung des Knochenmarks essenziell. Grund hierfür ist, dass noch keine feststellbare Ausschwemmung von Leukämiezellen aus dem Knochenmark im Blut vorliegt. Die Diagnose einer ALL kann durch den Nachweis eines Anteils lymphatischer Blasten von mindestens 20% im Knochenmark, der Zuordnung der Blasten zur lymphatischen Reihe durch Immunphänotypisierung und dem Nachweis charakteristischer genetischer Veränderungen gestellt werden."), br(),
-                   
-                 ),
-                 
-                 
-                 tabPanel("Therapie",
-                          p("Unbehandelt können Patienten binnen weniger Wochen an ALL versterben.  Heutzutage liegt die Heilungsrate nach intensiver Therapie bei 40 bis 50% bei Erwachsenen, bei Kindern bei 80%. 
-Häufige Therapiearten sind die systemische Chemptherapie, Tyrosinkinase-Inhibitor, prophylaktische ZNS-Chemotherapie und ZNS-Bestrahlung.
-"), br(),
-                   
-                 ),
-               )
-             ),
-    ), 
-      tabPanel("Dataset",
-               
-        
-      ),
-      
-      
-      tabPanel("Data Visualisation",
-               
-               
-               navlistPanel(
-                 
-                 # add to every graphic a description and comparison to mean values of healthy humans 
-                 tabPanel("Plot 1",
+                        ),
+                        
+                        tabPanel(
+                          "Diagnostik",
+                          p(
+                            withMathJax(includeMarkdown("diagnosis.md"))
+                          ),
+                          br(),
                           
-                          # gbt to alcohol (and bmi)
-                          plotOutput("boxplot_gbt_alc")
-                   
-                 ),
-                 
-                 
-                 tabPanel("Plot 2",
-                   
-                          # age to white blood cells (and gender, smoker)
-                          plotOutput("ggplot_age_wbc")
-                 ),
-                 
-                 
-                 
-                 tabPanel("Plot 3",
-                   
-                          # age to hemoglobin (and gender)
-                          plotOutput("ggplot_age_hemoglobine")
-                 ),
-                 
-                 
-                 
-                 tabPanel("Plot 4",
-                   
-                          # age to rbc (and gender, smoker)
-                          plotOutput("ggplot_age_rbc")
-                 ),
-                 
-                 
-                 tabPanel("Reactive Plot",
-                   
-                 ),
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-               )
-        
-      )
-      
-    
-  
-  
+                        ),
+                        
+                        
+                        tabPanel(
+                          "Therapie",
+                          p(
+                            withMathJax(includeMarkdown("therapy.md"))
+                            
+                          ),
+                          br(),
+                          
+                        ),
+                      )
+                    ),
+                  ),
+                  tabPanel(icon = icon("book-medical"),
+                    "Blutwerte",
+                    
+                    mainPanel(
+                      img(
+                        src = 'blood.png',
+                        align = "center",
+                        height = "160 px"
+                      ),
+                    ),
+                    br(),
+                    br(),
+                    
+                    mainPanel(
+                      tabsetPanel(
+                        tabPanel(
+                          "Erythrozyten",
+                          
+                          p(
+                            withMathJax(includeMarkdown("erys.md"))
+                          ),
+                          br(),
+                        ),
+                        
+                        tabPanel(
+                          "Haemoglobin",
+                          
+                          p(
+                            withMathJax(includeMarkdown("hemo.md"))
+                          ),
+                          br()
+                        ),
+                        
+                        
+                        tabPanel(
+                          "Leukozyten",
+                          p(
+                            withMathJax(includeMarkdown("leuk.md"))
+                          ),
+                          br(),
+                          
+                        ),
+                        
+                        tabPanel(
+                          "Kreatinin",
+                          p(
+                            withMathJax(includeMarkdown("creatinine.md"))
+                          ),
+                          br(),
+                          
+                        ),
+                        
+                        
+                        tabPanel(
+                          "GBT",
+                          p(
+                            withMathJax(includeMarkdown("gbt.md"))
+                            
+                          ),
+                          br(),
+                          
+                        ),
+                        tabPanel(
+                          "Differentialblutbild",
+                          p(
+                            withMathJax(includeMarkdown("dif.md"))
+                          ),
+                          br(),
+                          
+                        ),
+                      ),
+                      
+                    ),
+                    
+                    withMathJax(includeMarkdown("bloodtable.md"))
+                    
+                  ),
+                  tabPanel("Datensatz",
+                           icon = icon("list-alt"), fluidRow(h2("Dataset")),
+                           column(
+                             2,
+                             checkboxGroupInput(
+                               inputId = "check_choices_input", label = "Select columns",
+                               choices = check_choices, selected = check_choices
+                             ),
+                           ),
+                           column(10, dataTableOutput(outputId = "table"))
+                           
+                  ),
+                  
+                  tabPanel(
+                    "Datenvisualisierung",
+                    
+                    
+                    navlistPanel(
+                      
+                      # add to every graphic a description and comparison to mean values of healthy humans 
+                      tabPanel("Liver and alcohol",
+                               
+                               # gbt to alcohol (and bmi)
+                               plotOutput("boxplot_gbt_alc")
+                               
+                      ),
+                      
+                      
+                      tabPanel("white blood cells and age",
+                               
+                               # age to white blood cells (and gender, smoker)
+                               plotOutput("ggplot_age_wbc")
+                               
+                      ),
+                      
+                      
+                      
+                      tabPanel("hemoglobin and age",
+                               
+                               # age to hemoglobin (and gender)
+                               plotOutput("ggplot_age_hemoglobine")
+                               
+                      ),
+                      
+                      
+                      
+                      tabPanel("erythrocyten and age",
+                               
+                               # age to rbc (and gender, smoker)
+                               plotOutput("ggplot_age_rbc")
+                               
+                      ),
+                      
+                      
+                      tabPanel("Reactive Plot",
+                               
+                               verticalLayout(
+                                 a(href="https://shiny.rstudio.com/reference/shiny/0.14/verticalLayout.html", "Link One"),
+                                 a(href="https://shiny.rstudio.com/reference/shiny/0.14/verticalLayout.html", "Link Two"),
+                                 a(href="https://shiny.rstudio.com/reference/shiny/0.14/verticalLayout.html", "Link Three"
+                                 ),
+                                 
+                               )
+                               
+                               
+                      ),
+                      
+                    )
+                    
+                    
+                  ),
+                  
+                  
+                         
+                      tabPanel("Tabellen",
+                       icon = icon("table"),
+                       sidebarPanel(h5("Zusammenfassung"), br(),
+                         selectInput(
+                           inputId ="column","Suchen Sie eine Variable aus",
+                           choice= sel_input_table, selected = "age"
+                           ),
+                                    
+                                    
+                                    
+                       ),
+                       mainPanel(
+                         tabsetPanel(
+                           tabPanel(
+                             title = "Statistik",
+                            
+                             verbatimTextOutput("summary")
+                             
+                             
+                             
+                           )
+                         )
+                       )
+                                    
+                                
+                
+                                    
+                  
+                )))
+                
+                
+                
+         
 
-  ) 
-  
-    
-)  
+           
+     #M?gliche Ausgaben
+#selectInput(inputId ="stable","Suchen Sie eine Variable aus",choices=check_choices),
+#fileInput("csv_input", "Select CSV File to Import", accept = ".csv"),
+#selectInput("num_var","Nummerical Variable 1", choices=c(not_sel)),
+# actionButton("run_button", "Run Analysis", icon=icon("play"))
+#selectInput(inputId ="stable","Suchen Sie eine Variable aus",choices=check_choices)
+#tableOutput(outputId = "stable")
+
+
+
+#Markdown einbilden mithilfe von:
+#https://stackoverflow.com/questions/33499651/rmarkdown-in-shiny-application

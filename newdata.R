@@ -2,7 +2,7 @@ library(tidyverse)
 
 cancer_data <- read_csv("cancer_data.csv")
 
-
+cancer_data <- select(cancer_data, -tumour_size) #Entfernt Spalte tumour_size, da diese f¸r ALL nicht relevant ist
 
 set.seed(3)
 
@@ -150,7 +150,7 @@ cancer_data <- cancer_data %>% mutate(smoking=
                                                                      prob=c(0.35,0.65))
                                         ))  %>%
   
-  #HINZUGEF?GTE VARIABLEN:
+  #HINZUGEF‹GTE VARIABLEN:
   #abgebildet wird, wieviele Vorerkrankungen es in der Familie gab  
   mutate(previousdiseasinfam= sample(0:3, 300, replace= TRUE)) %>%
   
@@ -164,7 +164,7 @@ cancer_data <- cancer_data %>% mutate(smoking=
     cancer_data$age < 6 ~ sample(1:2, 300, replace= TRUE),
     cancer_data$age >= 6 ~ sample(1:5, 300, replace= TRUE)) )  %>%
   
-  #Konsumiert die Person regelm??ig Alkohol, 0= nein, 1=ja
+  #Konsumiert die Person regelm‰ﬂig Alkohol, 0= nein, 1=ja
   
   mutate(alcohol =       case_when(
     age < 18 ~ sample(0:0, 300, replace= TRUE),
@@ -175,7 +175,7 @@ cancer_data <- cancer_data %>% mutate(smoking=
   
   
   
-  # Gro?es Blutbild: eosinphils, monocytes, lymphocytes, neutrophils
+  # Groﬂes Blutbild: eosinphils, monocytes, lymphocytes, neutrophils
   #eosinphils
   mutate(eosinphils = runif(300, min=0.03, max= 0.075)) %>%
   
@@ -242,7 +242,7 @@ cancer_data <- cancer_data %>% dplyr::select(ID,
 view(cancer_data)
 
 library(data.table)
-fwrite(cancer_data, "C:/Users/Desktop-Mobbl/Documents/ALL-App/cancer_data.csv")
+fwrite(cancer_data, "C:\\Users\\muarl\\Desktop\\cancer_data.csv")
 
 #https://www.netdoktor.de/laborwerte/gpt-erhoeht/
 #https://www.lifeline.de/diagnose/laborwerte/kreatinin-id47722.html#:~:text=Der%20Kreatininwert%20(Abk%C3%BCrzung%3A%20KREA%20oder,auf%20Nierensch%C3%A4den%20oder%20chronische%20Nierenerkrankungen

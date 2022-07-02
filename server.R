@@ -1,13 +1,16 @@
 library(tidyverse)
 library(ggplot2)
-library(DT)
 library(data.table)
-library(forestplot)
+
 
 # Define server logic required to draw a plot in shiny ALL App
 server <- function(input, output) {
-  # initialize given cancer data via cancer_data.csv
-  df <- read.csv("cancer_data.csv", header = TRUE)
+  # initialize given cancer data via newdata.csv
+  df <- read.csv("newdata.csv", header = TRUE)
+  
+  # Output DataTable
+  output$table <- renderDataTable(df)
+  
   
   # Filter table
   data <- reactive(df %>% select.list(c(input$tab_opt)))
@@ -35,7 +38,7 @@ server <- function(input, output) {
     
   })
   
-
+  
   # generate boxplot gbt to alcoholo (to bmi)
   # change to another plot oder add another plot to include bmi
   output$boxplot_gbt_alc <- renderPlot({
@@ -53,7 +56,7 @@ server <- function(input, output) {
   output$ggplot_age_wbc <- renderPlot({
     df %>%
       ggplot(aes(x = age, y = wbc)) +
-      geom_col() +
+      geom_col(aes(colour = smoking)) +
       theme_bw() +
       labs(x = "Age",
            y = "White blood cells")
@@ -81,4 +84,26 @@ server <- function(input, output) {
            y = "Erythrocyten")
   })
   
+  # reactive Dataset
+  dataset <- reactive({
+    
+    select(df, c(input$check_choices_input))
+  })
+  
+  
+  # Output DataTable
+  output$table <- renderDataTable(dataset())
+  
+ 
+ 
+  #Output Summary 
+  output$summary <- renderPrint({
+   
+    summary(df[,input$column])
+  })
+
+  
+  
+  
 }
+
