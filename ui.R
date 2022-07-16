@@ -5,7 +5,7 @@ ui <- fluidPage(
   theme = shinytheme("sandstone"),
   
   navbarPage(
-    p(strong("ALL - Dashboard")),
+    p(strong("ALL - Shiny App")),
     tabPanel(
       icon = icon("home"),
       
@@ -19,7 +19,7 @@ ui <- fluidPage(
       br(),
       br(),
       h1(em(
-        "Willkommen zu unserem Leukaemie Dashboard !"
+        "Willkommen zu unserer Leukämie - Shiny App!"
       ), Style = "color: grey; font-size:40px"),
       
       withMathJax(includeMarkdown("aboutapp.md"))
@@ -29,9 +29,9 @@ ui <- fluidPage(
     
     tabPanel(
       icon = icon("info"),
-      "Ueber Leukaemie",
+      "Über Leukämie",
       
-      mainPanel(withMathJax(includeMarkdown("general.md"))),
+      mainPanel(HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/8jtw3OcLi3Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')),
       br(),
       br(),
       
@@ -94,7 +94,7 @@ ui <- fluidPage(
                    )),
                    br(), ),
           
-          tabPanel("Haemoglobin",
+          tabPanel("Hämoglobin",
                    
                    p(withMathJax(
                      includeMarkdown("hemo.md")
@@ -127,46 +127,62 @@ ui <- fluidPage(
                    br(), ),
         ),
         
-      ),
+      
       
       withMathJax(includeMarkdown("bloodtable.md"))
-      
+      ),
     ),
     tabPanel(
       "Datensatz",
       icon = icon("list-alt"),
-      fluidRow(h2("Dataset")),
-      column(
-        2,
+      h2(strong("Datensatz")),
+      sidebarLayout(sidebarPanel(
+        # Initialisierung des Popover Buttons mit hilfe des shinyBS Pakets
+        bsButton("q1", label = "", icon = icon("question"),
+                 style = "default", size = "extra-small"),
+        
+        # Initialisierung des Popover mit dem shinyBS Paket
+        bsPopover(id = "q1", title = "Hilfe zur Erklärung der Spalte: ",
+                  content = popover_txt,
+                  placement = "right", 
+                  trigger = "hover", 
+                  options = list(container = "body")
+        ),
+        
+        
         checkboxGroupInput(
           inputId = "check_choices_input",
-          label = "Select columns",
-          choices = check_choices,
-          selected = check_choices
+          label = "Wähle die Spalte aus:",
+          choices = check_choices_input,
+          selected = check_choices_input
         ),
+        
+        
+        width = 3
       ),
-      column(10, dataTableOutput(outputId = "table"))
-    ),
+      
+      mainPanel(dataTableOutput(outputId = "table"))
+      ), ),
     tabPanel(
       icon=icon("cube"),
-      "Data Visualisation",
+      "Datenvisualisierung",
       navbarPage(
         title =
-          "Graphics",
+          "Grafiken",
         tabPanel(
           "Scatterplot",
           h2("Scatterplot"),
           sidebarLayout(sidebarPanel(
             selectInput(
               inputId = "scat_var_x",
-              "Choose variable for x",
+              "Wähle eine Variable X aus",
               choices = label_options,
               selected = "age"
             ),
             (
               selectInput(
                 inputId = "scat_var_y",
-                "Choose variable for y",
+                "Wähle eine Variable Y aus",
                 choices = label_options,
                 selected = "hemoglobine"
               )
@@ -174,7 +190,7 @@ ui <- fluidPage(
             (
               selectInput(
                 inputId = "scat_var_group",
-                "Choose grouping variable",
+                "Wähle die Gruppierungsvariable aus",
                 choices = label_options,
                 selected = "smoking"
               )
@@ -188,15 +204,15 @@ ui <- fluidPage(
           sidebarLayout(sidebarPanel(
             selectInput(
               inputId = "box_var_x",
-              "Choose variable for x",
+              "Wähle eine Variable X aus",
               choices =  label_options,
               selected = "gbt"
             ),
             (
               selectInput(
                 inputId = "box_var_group",
-                "Choose grouping variable",
-                choices =  label_options,
+                "Wähle die Gruppierungsvariable aus",
+                choices =  label_options_group_b,
                 selected = "alcohol"
               )
             )
@@ -204,12 +220,12 @@ ui <- fluidPage(
           mainPanel(plotOutput("box"))),
         ),
         tabPanel(
-          "Histogram",
-          h2("Histogram"),
+          "Histogramm",
+          h2("Histogramm"),
           sidebarLayout(sidebarPanel(
             selectInput(
               inputId = "histo_var_x",
-              "Choose variable for x",
+              "Wähle eine Variable X aus",
               choices =  label_options,
               selected = "wbc"
             )
@@ -217,20 +233,20 @@ ui <- fluidPage(
           mainPanel(plotOutput("histo")))
         ),
         tabPanel(
-          "Smooth Line Chart",
-          h2("Smooth Line Chart"),
+          "Liniendiagramm",
+          h2("Liniendiagramm"),
           sidebarLayout(sidebarPanel(
             selectInput(
               inputId = "sline_var_x",
-              "Choose variable for x",
+              "Wähle eine Variable X aus",
               choices = label_options,
               selected = "age"
             ),
             (
               selectInput(
                 inputId = "sline_var_y",
-                "Choose variable for y",
-                choices = check_choices,
+                "Wähle eine Variable Y aus",
+                choices = label_options,
                 selected = "height"
               )
             ),
@@ -245,30 +261,76 @@ ui <- fluidPage(
     tabPanel(
       "Tabellen",
       icon = icon("columns"),
-      sidebarPanel(
-        h5("Zusammenfassung"),
-        br(),
+      sidebarLayout(sidebarPanel(
+        h5("Lagemaße"),
         selectInput(
           inputId = "column",
-          "Suchen Sie eine Variable aus",
+          "Wähle eine Variable aus",
           choice = sel_input_table,
           selected = "age"
+          
         ),
-        
-        
         
       ),
       mainPanel(tabsetPanel(
-        tabPanel(title = "Statistik",
+        tabPanel(title = "Lagemaße",
                  
-                 verbatimTextOutput("summary"))
-      ))
+                 verbatimTextOutput("summary")))),
+      
+      ),
+      
+      sidebarLayout(sidebarPanel(
+        h5("Häufigkeiten"),
+        selectInput(
+          inputId = "column2",
+          "Wähle eine Variable aus",
+          choice = freq_table,
+          selected = "bmi"
+          
+        ),
+        
+      ),
       
       
+      mainPanel(tabsetPanel(
+        tabPanel(title = "Häufigkeiten",
+                 
+                 verbatimTextOutput("freq")))),
+      ),
       
       
+      sidebarLayout(sidebarPanel(
+        h5("Regression"),
+        selectInput(
+          inputId = "column3",
+          "Wähle eine Zielgröße aus",
+          choice = check_choices ,
+          selected = "age"
+          
+        ),(
+          selectInput(
+            inputId = "column4",
+            "Wähle eine Einflussgröße aus",
+            choice = check_choices ,
+            selected = "bmi"
+            
+            
+            
+          )
+        ),
+      ),
       
+      mainPanel(tabsetPanel(
+        tabPanel(title = "Regression",
+                 
+                 verbatimTextOutput("reg"))),
+        
+      )
+      )
     ),
+    
+    
+    
     tabPanel("Über uns",
              icon = icon("user-friends"),
              
@@ -276,10 +338,29 @@ ui <- fluidPage(
              
              mainPanel(
                tabsetPanel(
-                 tabPanel(title = "Hind Bayasi"),
-                 tabPanel(title = "Alexander Heimbuch"),
-                 tabPanel(title = "Arlinda Mucaj"),
-                 tabPanel(title = "Moritz Stengel")
+                 tabPanel(title = "Hind Bayasi",br(),
+                          mainPanel("Hochschule: Technische Hochschule Ulm", br(),br(),
+                                    "Studiengang: Data Science in der Medizin", br(),br(),
+                                    "Semester: 5", br(),br(),
+                                    "Email-Adresse: bayasi@mail.hs-ulm.de", br(),br(),
+                                    )),
+                 
+                      
+                 tabPanel(title = "Alexander Heimbuch", br(),
+                          mainPanel("Hochschule: Technische Hochschule Ulm", br(),br(),
+                                    "Studiengang: Data Science in der Medizin", br(),br(),
+                                    "Semester: 5", br(),br(),
+                                    "Email-Adresse: heimbuch@mail.hs-ulm.de", br(),br(), )),
+                 tabPanel(title = "Arlinda Mucaj", br(),
+                          mainPanel("Hochschule: Technische Hochschule Ulm", br(),br(),
+                                    "Studiengang: Data Science in der Medizin", br(),br(),
+                                    "Semester: 5", br(),br(),
+                                    "Email-Adresse: amucaj@mail.hs-ulm.de", br(),br(),)),
+                 tabPanel(title = "Moritz Stengel", br(),
+                          mainPanel("Hochschule: Technische Hochschule Ulm", br(),br(),
+                                    "Studiengang: Informationsmanagement im Gesundheitswesen", br(),br(),
+                                    "Semester: 8", br(),br(),
+                                    "Email-Adresse: stengel@mail.hs-ulm.de", br(),br(),)),
                  
                  
                )

@@ -2,8 +2,10 @@ library(tidyverse)
 
 cancer_data <- read_csv("cancer_data.csv")
 
+
 cancer_data <- select(cancer_data, -tumour_size) #Entfernt Spalte tumour_size, da diese für ALL nicht relevant ist
 
+options(digits=4)
 set.seed(3)
 
 #wbc
